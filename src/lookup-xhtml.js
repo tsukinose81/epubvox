@@ -15,10 +15,10 @@ const lookupPTag = (target, XHTMLPath) => {
     const rubys = Array.from(p.getElementsByTagName("ruby"));
     rubys.forEach((ruby) => {
       const rts = Array.from(ruby.getElementsByTagName("rt"));
-      rts.forEach((rt) => ruby.removeChild(rt));
+      rts.forEach((rb) => ruby.removeChild(rb));
     });
     text += p.textContent;
-    if ((index + 1) % 10 === 0) {
+    if ((index + 1) % 5 === 0) {
       texts.push(text);
       text = "";
     }

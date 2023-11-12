@@ -1,7 +1,7 @@
 const { app } = require("electron");
 const fs = require("fs");
 const path = require("path");
-const fetch = require("node-fetch");
+// const fetch = require("node-fetch");
 const { createDirectory } = require("./utils");
 
 const convertVox = async (target, text, chapter, lineIndex) => {
@@ -11,7 +11,7 @@ const convertVox = async (target, text, chapter, lineIndex) => {
   requestJSON.speedScale = 1.5;
 
   await synthesis(target, requestJSON, chapter, lineIndex);
-  return true;
+  return;
 };
 
 const audioQuery = async (text) => {
@@ -24,7 +24,7 @@ const audioQuery = async (text) => {
   };
   try {
     const res = await fetch(url, options).catch((e) => console.log(e));
-    if (res.ok) {
+    if (res && res.ok) {
       return res.json();
     } else {
       console.error("audioQueryでエラーが発生しました。", res);
@@ -47,9 +47,12 @@ const synthesis = async (target, requestJSON, chapter, lineIndex) => {
   };
 
   try {
+    console.log(requestJSON);
     const res = await fetch(url, options).catch((e) => console.log(e));
 
-    const audioData = await res.buffer(); // レスポンスデータをBufferに変換
+    // const audioData = await res.buffer(); // レスポンスデータをBufferに変換
+    const arrayBuffer = await res.arrayBuffer();
+    const audioData = Buffer.from(arrayBuffer);
 
     const destinationDirectory = path.join(app.getPath("music"), target.name);
     createDirectory(destinationDirectory);
@@ -60,7 +63,7 @@ const synthesis = async (target, requestJSON, chapter, lineIndex) => {
     );
     fs.writeFileSync(destination, audioData);
 
-    console.log("saved.");
+    console.log(destination + "saved.");
   } catch (e) {
     console.error("エラーが発生しました", e);
   }
